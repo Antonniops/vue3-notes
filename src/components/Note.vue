@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { Button, Card } from 'primevue'
-import { Note } from '../interfaces/note.model'
+import { Card, Dialog, InputText } from 'primevue'
+import Editor from 'primevue/editor'
+import { type Note } from '../interfaces/note.model'
 import { ref } from 'vue'
-import { time } from 'console'
 
-const emit = defineEmits(['delete'])
-const deleted = ref(false)
-
-defineProps<{
+const props = defineProps<{
   note: Note
 }>()
 
 defineOptions({
   name: 'vNote',
 })
+
+const emit = defineEmits(['delete', 'changeTitle', 'changeContent'])
+const deleted = ref(false)
+const visible = ref(false)
+const onEditTitle = ref(false)
+const onEditText = ref(false)
+const noteCopy = ref<Note>(props.note)
 
 function deleteItem(id: number): void {
   deleted.value = true
@@ -25,26 +29,56 @@ function deleteItem(id: number): void {
 </script>
 
 <template>
-  <Card style="width: 25rem; overflow: hidden" :class="{ bounce: deleted }">
+  <Card style="width: 25rem; overflow: hidden" :class="{ bounce: deleted }" @click="visible = true">
     <template #title>
       <p class="flex justify-between items-center">
         {{ note.title }}
         <i
           class="pi pi-trash text-red-500 hover:text-red-200 cursor-pointer"
-          @click="deleteItem(note.id)"
-        ></i></p
-    ></template>
+          @click.stop.prevent="deleteItem(note.id)"
+        ></i>
+      </p>
+    </template>
     <template #subtitle>Card subtitle</template>
     <template #content>
       <p class="m-0">
         {{ note.content }}
       </p>
     </template>
-    <template #footer>
-      <div class="flex gap-4 mt-1">
-        <Button label="Cancel" severity="secondary" outlined class="w-full" />
-        <Button label="Save" class="w-full" />
-      </div>
-    </template>
   </Card>
+
+  <Dialog
+    v-model:visible="visible"
+    maximizable
+    modal
+    :style="{ width: '50rem' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <template #header>
+      <div v-if="!onEditTitle" @click="onEditTitle = true">
+        <h3 class="flex justify-between items-center font-semibold text-2xl">
+          {{ note.title }}
+        </h3>
+      </div>
+      <InputText
+        v-model="noteCopy.title"
+        class="w-full"
+        v-if="onEditTitle"
+        @keyup="$emit('changeTitle', noteCopy.title)"
+        @blur="onEditTitle = false"
+      />
+    </template>
+
+    <div v-if="!onEditText" @click="onEditText = true">
+      <p v-html="note.content"></p>
+    </div>
+    <div class="card">
+      <Editor
+        v-model="noteCopy.content"
+        editorStyle="height: 320px"
+        v-if="onEditText"
+        @blur="onEditText = false"
+      />
+    </div>
+  </Dialog>
 </template>

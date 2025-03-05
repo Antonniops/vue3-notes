@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, InputText, Menubar } from 'primevue'
+import { IconField, InputIcon, InputText } from 'primevue'
 import { computed, ref } from 'vue'
 import vNote from './components/Note.vue'
 import type { Note } from './interfaces/note.model'
@@ -7,53 +7,7 @@ import type { Note } from './interfaces/note.model'
 const notes = ref<Note[]>([])
 const search = ref('')
 const lastId = ref(0)
-
-const items = ref([
-  {
-    label: 'Home',
-    icon: 'pi pi-home',
-  },
-  {
-    label: 'Features',
-    icon: 'pi pi-star',
-  },
-  {
-    label: 'Projects',
-    icon: 'pi pi-search',
-    items: [
-      {
-        label: 'Components',
-        icon: 'pi pi-bolt',
-      },
-      {
-        label: 'Blocks',
-        icon: 'pi pi-server',
-      },
-      {
-        label: 'UI Kit',
-        icon: 'pi pi-pencil',
-      },
-      {
-        label: 'Templates',
-        icon: 'pi pi-palette',
-        items: [
-          {
-            label: 'Apollo',
-            icon: 'pi pi-palette',
-          },
-          {
-            label: 'Ultima',
-            icon: 'pi pi-palette',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Contact',
-    icon: 'pi pi-envelope',
-  },
-])
+const isDarkMode = ref(false)
 
 function addNote(): void {
   notes.value.push({
@@ -71,6 +25,7 @@ function deleteNote(id: number): void {
 
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark')
+  isDarkMode.value = !isDarkMode.value
 }
 
 const filteredNotes = computed(() => {
@@ -83,27 +38,34 @@ const filteredNotes = computed(() => {
 </script>
 
 <template>
-  <div class="card">
-    <Menubar
-      :model="items"
-      class="flex"
-      :pt="{
-        rootList: '!flex-col',
-      }"
-    />
-  </div>
+  <nav class="flex flex-row justify-between items-center">
+    <IconField class="mx-auto">
+      <InputIcon class="pi pi-search" />
+      <InputText type="text" v-model="search" placeholder="Buscar nota" />
+    </IconField>
 
-  <div class="card flex justify-center">
-    <InputText type="text" v-model="search" />
-  </div>
+    <div>
+      <i class="pi pi-plus text-amber-400 mr-2" style="font-size: 1.5rem" @click="addNote()" />
+      <i
+        class="pi pi-sun text-amber-300 hover:text-amber-200 cursor-pointer hover:ring-amber-200"
+        style="font-size: 1.5rem"
+        @click="toggleDarkMode()"
+        v-if="!isDarkMode"
+      />
+      <i
+        class="pi pi-moon text-gray-300 hover:text-gray-200 cursor-pointer"
+        style="font-size: 1.5rem"
+        @click="toggleDarkMode()"
+        v-if="isDarkMode"
+      />
+    </div>
+  </nav>
 
-  <ul class="flex flex-wrap gap-4">
+  <ul class="flex flex-wrap gap-4 mt-5">
     <li class="list-none" v-for="note in filteredNotes" :key="note.id">
       <vNote :note="note" @delete="deleteNote" />
     </li>
   </ul>
 
-  <Button label="Toggle Dark Mode" @click="toggleDarkMode()" />
-  <Button label="Save" @click="addNote()" />
   <RouterView />
 </template>
