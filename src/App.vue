@@ -45,7 +45,11 @@ const filteredNotes = computed(() => {
     </IconField>
 
     <div>
-      <i class="pi pi-plus text-amber-400 mr-2" style="font-size: 1.5rem" @click="addNote()" />
+      <i
+        class="pi pi-plus text-amber-400 mr-2 hover:cursor-pointer hover:ring-amber-200"
+        style="font-size: 1.5rem"
+        @click="addNote()"
+      />
       <i
         class="pi pi-sun text-amber-300 hover:text-amber-200 cursor-pointer hover:ring-amber-200"
         style="font-size: 1.5rem"

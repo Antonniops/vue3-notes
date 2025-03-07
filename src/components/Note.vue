@@ -3,6 +3,7 @@ import { Card, Dialog, InputText } from 'primevue'
 import Editor from 'primevue/editor'
 import { type Note } from '../interfaces/note.model'
 import { ref } from 'vue'
+import { on } from 'events'
 
 const props = defineProps<{
   note: Note
@@ -26,6 +27,11 @@ function deleteItem(id: number): void {
     emit('delete', id)
   }, 500)
 }
+
+function onHideDialog(): void {
+  onEditText.value = false
+  onEditTitle.value = false
+}
 </script>
 
 <template>
@@ -39,11 +45,8 @@ function deleteItem(id: number): void {
         ></i>
       </p>
     </template>
-    <template #subtitle>Card subtitle</template>
     <template #content>
-      <p class="m-0">
-        {{ note.content }}
-      </p>
+      <p class="m-0" :innerHTML="note.content"></p>
     </template>
   </Card>
 
@@ -53,6 +56,7 @@ function deleteItem(id: number): void {
     modal
     :style="{ width: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+    @hide="onHideDialog()"
   >
     <template #header>
       <div v-if="!onEditTitle" @click="onEditTitle = true">
@@ -64,7 +68,6 @@ function deleteItem(id: number): void {
         v-model="noteCopy.title"
         class="w-full"
         v-if="onEditTitle"
-        @keyup="$emit('changeTitle', noteCopy.title)"
         @blur="onEditTitle = false"
       />
     </template>
