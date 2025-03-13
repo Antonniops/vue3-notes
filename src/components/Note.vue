@@ -12,7 +12,7 @@ defineOptions({
   name: 'vNote',
 })
 
-const emit = defineEmits(['delete', 'changeTitle', 'changeContent'])
+const emit = defineEmits(['delete'])
 const deleted = ref(false)
 const visible = ref(false)
 
@@ -26,15 +26,17 @@ function deleteItem(id: number): void {
 </script>
 
 <template>
-  <Card style="width: 25rem; overflow: hidden" :class="{ bounce: deleted }" @click="visible = true">
+  <Card style="overflow: hidden" :class="{ bounce: deleted }" @click="visible = true">
     <template #title>
-      <p class="flex justify-between items-center">
-        {{ note.title }}
+      <div class="flex flex-row justify-between">
+        <p class="flex justify-between items-center text-base md:text-lg font-bold w-2/3">
+          {{ note.title }}
+        </p>
         <i
-          class="pi pi-trash text-red-500 hover:text-red-200 cursor-pointer"
+          class="pi pi-trash ml-2 text-red-500 hover:text-red-200 cursor-pointer"
           @click.stop.prevent="deleteItem(note.id)"
         ></i>
-      </p>
+      </div>
     </template>
     <template #content>
       <p class="m-0" :innerHTML="note.content"></p>

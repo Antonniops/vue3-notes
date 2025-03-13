@@ -19,7 +19,6 @@ const onEditTitle = ref(false)
 const onEditText = ref(false)
 
 function onHideDialog(): void {
-  console.log('KJSADGHKLHJDSGKLJ')
   onEditText.value = false
   onEditTitle.value = false
 }

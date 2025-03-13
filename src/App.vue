@@ -65,8 +65,8 @@ const filteredNotes = computed(() => {
     @click="addNote()"
   />
 
-  <ul class="flex flex-wrap justify-around gap-4 mt-5">
-    <li class="list-none" v-for="note in filteredNotes" :key="note.id">
+  <ul class="flex flex-row flex-wrap justify-center sm:gap-2 mt-5">
+    <li class="list-none w-1/2 sm:w-60 md:w-70" v-for="note in filteredNotes" :key="note.id">
       <vNote :note="note" @delete="deleteNote" />
     </li>
   </ul>
