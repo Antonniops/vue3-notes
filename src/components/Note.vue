@@ -16,7 +16,7 @@ const emit = defineEmits(['delete'])
 const deleted = ref(false)
 const visible = ref(false)
 
-function deleteItem(id: number): void {
+function deleteItem(id: string): void {
   deleted.value = true
 
   setTimeout(() => {

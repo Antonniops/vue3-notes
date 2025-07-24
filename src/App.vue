@@ -2,26 +2,10 @@
 import { IconField, InputIcon, InputText } from 'primevue'
 import { computed, ref } from 'vue'
 import vNote from './components/Note.vue'
-import type { Note } from './interfaces/note.model'
+import { store } from './store/store'
 
-const notes = ref<Note[]>([])
 const search = ref('')
-const lastId = ref(0)
 const isDarkMode = ref(false)
-
-function addNote(): void {
-  notes.value.push({
-    id: lastId.value,
-    title: 'Note Title' + Date.now(),
-    content: 'Note Content',
-  })
-
-  lastId.value++
-}
-
-function deleteNote(id: number): void {
-  notes.value = notes.value.filter((note) => note.id !== id)
-}
 
 function toggleDarkMode() {
   document.documentElement.classList.toggle('my-app-dark')
@@ -31,7 +15,7 @@ function toggleDarkMode() {
 const filteredNotes = computed(() => {
   const query = search.value.toLowerCase()
 
-  return notes.value.filter((note) => {
+  return store.notes.filter((note) => {
     return note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query)
   })
 })
@@ -62,12 +46,12 @@ const filteredNotes = computed(() => {
   <i
     class="pi pi-plus text-green-400 p-2 hover:text-green-300 hover:cursor-pointer hover:ring hover:ring-green-200 rounded-full fixed bottom-7 right-7"
     style="font-size: 1.5rem"
-    @click="addNote()"
+    @click="store.addNote()"
   />
 
   <ul class="flex flex-row flex-wrap justify-center sm:gap-2 mt-5">
     <li class="list-none w-1/2 sm:w-60 md:w-70" v-for="note in filteredNotes" :key="note.id">
-      <vNote :note="note" @delete="deleteNote" />
+      <vNote :note="note" @delete="store.deleteNote(note.id)" />
     </li>
   </ul>
 
