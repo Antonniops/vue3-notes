@@ -1,18 +1,37 @@
+// src/stores/useNotesStore.ts
+import { ref, watch } from 'vue'
 import type { Note } from '@/interfaces/note.model'
-import { reactive } from 'vue'
 
-export const store = reactive({
-  notes: [] as Note[],
+// Estado principal (fuera de la función para mantener estado global)
+const storedNotes = localStorage.getItem('notes')
+const notes = ref<Note[]>(storedNotes ? JSON.parse(storedNotes) : [])
 
-  addNote(): void {
-    this.notes.push({
+// Guardado automático
+watch(
+  notes,
+  (newNotes) => {
+    localStorage.setItem('notes', JSON.stringify(newNotes))
+  },
+  { deep: true },
+)
+
+// Store tipo Pinia
+export function useNotesStore() {
+  function addNote() {
+    notes.value.push({
       id: crypto.randomUUID(),
       title: 'Note Title',
       content: 'Note Content',
     })
-    console.log(this.notes)
-  },
-  deleteNote(id: string): void {
-    this.notes = this.notes.filter((note) => note.id !== id)
-  },
-})
+  }
+
+  function deleteNote(id: string) {
+    notes.value = notes.value.filter((note) => note.id !== id)
+  }
+
+  return {
+    notes,
+    addNote,
+    deleteNote,
+  }
+}
